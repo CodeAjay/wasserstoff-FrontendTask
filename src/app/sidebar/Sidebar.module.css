@@ -1,0 +1,64 @@
+/* components/Sidebar.module.css */
+.sidebar {
+    width: 250px;
+    background-color: #2c2c2c;
+    color: white;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+  }
+  
+  .listItem {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px;
+    color: #ddd;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .bbb .button{
+    max-width: 30px !important;
+    padding: 0px !important;
+  }
+  
+  .listItem:hover {
+    background-color: #3c3c3c;
+  }
+  
+  .listItemIcon {
+    margin-right: 8px;
+  }
+  
+  .folderIcon {
+    color: #ffa500; /* Folder color */
+  }
+  
+  .fileIcon {
+    color: #42a5f5; /* File color */
+  }
+  
+  .nested {
+    padding-left: 20px;
+  }
+  
+  .modalContent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    background-color: white;
+    padding: 20px;
+    outline: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-radius: 8px;
+  }
+  
+  .folderToggle {
+    margin-right: 5px;
+  }
+  
