@@ -12,3 +12,10 @@ export interface Folder {
   type: 'folder';
   children: (File | Folder)[];
 }
+
+export enum FileType {
+  TextEditor = 'ed',
+  NoteMaker = 'note',
+  ListMaker = 'lt',
+  ReadmeViewer = 'readme',
+}

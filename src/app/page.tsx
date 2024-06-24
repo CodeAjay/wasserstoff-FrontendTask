@@ -40,10 +40,10 @@ export default function Home() {
 
   return (
     <main className="flex h-screen flex-row items-center justify-between">
-      <div className="sidebar h-screen w-[20%] p-5 bg-[#2c2c2c]">
+      {/* <div className="sidebar h-screen w-[20%] p-5 bg-[#2c2c2c]">
         <Sidebar files={files} onFilesChange={handleFilesChange} onFileSelect={handleFileSelect} />
-      </div>
-      <div className="w-[80%] h-[calc(100%-10px)] p-2.5 overflow-auto">
+      </div> */}
+      <div className="w-[100%] h-screen p-0 overflow-auto">
           <MainEditor selectedFile={selectedFile} />
       </div>
     </main>
