@@ -205,10 +205,15 @@
 
 import React, { useState } from 'react';
 import Sidebar from '../sidebar/page';
-import EdFileEditor from '../components/EdFileEditor';
-import NoteMaker from '../components/NoteMaker';
-import ListMaker from '../components/ListMaker';
-import ReadmePreview from '../components/ReadmePreview';
+import dynamic from 'next/dynamic';
+// import EdFileEditor from '../components/EdFileEditor';
+// import NoteMaker from '../components/NoteMaker';
+// import ListMaker from '../components/ListMaker';
+// import ReadmePreview from '../components/ReadmePreview';
+const EdFileEditor = dynamic(() => import('../components/EdFileEditor'), { ssr: false });
+const NoteMaker = dynamic(() => import('../components/NoteMaker'), { ssr: false });
+const ListMaker = dynamic(() => import('../components/ListMaker'), { ssr: false });
+const ReadmePreview = dynamic(() => import('../components/ReadmePreview'), { ssr: false });
 
 type File = {
   id: string;
@@ -263,6 +268,16 @@ const MainEditor: React.FC = () => {
     }
   };
 
+  const safeParseJSON = (jsonString: string, defaultValue: any) => {
+    try {
+      const parsed = JSON.parse(jsonString);
+      return parsed && typeof parsed === 'object' ? parsed : defaultValue;
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+      return defaultValue;
+    }
+  };
+
   const renderEditor = () => {
     if (!selectedFile) return <div>Please select a file to edit.</div>;
 
@@ -270,21 +285,11 @@ const MainEditor: React.FC = () => {
       case 'ed':
         return <EdFileEditor content={selectedFile.content} onChange={handleContentChange} />;
       case 'note':
-        try {
-          const parsedNotes = JSON.parse(selectedFile.content || '[]');
-          return <NoteMaker notes={parsedNotes} onUpdateNotes={(notes) => handleContentChange(JSON.stringify(notes))} />;
-        } catch (error) {
-          console.error('Error parsing notes JSON:', error);
-          return <div>Error parsing notes JSON.</div>; // Handle gracefully
-        }
+        const parsedNotes = safeParseJSON(selectedFile.content, []);
+        return <NoteMaker notes={parsedNotes} onUpdateNotes={(notes) => handleContentChange(JSON.stringify(notes))} />;
       case 'lt':
-        try {
-          const parsedItems = JSON.parse(selectedFile.content || '[]');
-          return <ListMaker items={parsedItems} onUpdateItems={(items) => handleContentChange(JSON.stringify(items))} />;
-        } catch (error) {
-          console.error('Error parsing list items JSON:', error);
-          return <div>Error parsing list items JSON.</div>; // Handle gracefully
-        }
+        const parsedItems = safeParseJSON(selectedFile.content, []);
+        return <ListMaker items={parsedItems} onUpdateItems={(items) => handleContentChange(JSON.stringify(items))} />;
       case 'readme':
         return <ReadmePreview content={selectedFile.content} onChange={handleContentChange} />;
       default:

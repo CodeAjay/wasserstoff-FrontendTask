@@ -1,7 +1,7 @@
 // components/EdFileEditor.tsx
 "use client"
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import MonacoEditor from 'react-monaco-editor';
 
 type EdFileEditorProps = {
@@ -10,6 +10,13 @@ type EdFileEditorProps = {
 };
 
 const EdFileEditor: React.FC<EdFileEditorProps> = ({ content, onChange }) => {
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Access window or any browser-specific API
+      // Initialize or update your editor
+    }
+  }, []);
+
   const handleEditorChange = (newValue: string) => {
     onChange(newValue);
   };

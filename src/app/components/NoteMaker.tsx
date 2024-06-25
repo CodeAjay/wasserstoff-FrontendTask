@@ -2,6 +2,8 @@
 
 "use client"
 
+import { useState } from "react";
+
 // import React, { useState } from 'react';
 
 // type Note = {
@@ -64,11 +66,6 @@
 
 // export default NoteMaker;
 
-import React, { useState } from 'react';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import styled from 'styled-components';
-
 interface Note {
   id: string;
   text: string;
@@ -81,13 +78,8 @@ interface Category {
   notes: Note[];
 }
 
-const initialCategories: Category[] = [
-  { id: 'cat1', title: 'Category 1', notes: [] },
-  { id: 'cat2', title: 'Category 2', notes: [] },
-];
-
-const NoteMaker: React.FC = () => {
-  const [categories, setCategories] = useState<Category[]>(initialCategories);
+const NoteMaker: React.FC<{ notes: Category[], onUpdateNotes: (notes: Category[]) => void }> = ({ notes, onUpdateNotes }) => {
+  const [categories, setCategories] = useState<Category[]>(notes);
   const [newNoteText, setNewNoteText] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
 
@@ -112,10 +104,12 @@ const NoteMaker: React.FC = () => {
     });
 
     setCategories(updatedCategories);
+    onUpdateNotes(updatedCategories);
     setNewNoteText('');
     setSelectedCategory('');
   };
 
+  // Handle the note drop logic
   const handleNoteDrop = (noteId: string, newCategoryId: string) => {
     const updatedCategories = categories.map(cat => {
       if (cat.id === newCategoryId) {
@@ -127,101 +121,25 @@ const NoteMaker: React.FC = () => {
       }
     });
     setCategories(updatedCategories);
+    onUpdateNotes(updatedCategories);
   };
 
-  const [, drag] = useDrag({
-    type: 'NOTE',
-    item: { id: 'new-note', category: '' },
-  });
-
-  const [, drop] = useDrop({
-    accept: 'NOTE',
-    drop: (item: { id: string, category: string }) => {
-      handleNoteDrop(item.id, selectedCategory); // Drop into the selected category
-    },
-  });
-
   return (
-    <DndProvider backend={HTML5Backend}>
-      <Wrapper>
-        <NoteInput>
-          <input
-            type="text"
-            placeholder="Enter note text"
-            value={newNoteText}
-            onChange={(e) => setNewNoteText(e.target.value)}
-          />
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-          >
-            <option value="">Select Category</option>
-            {categories.map(cat => (
-              <option key={cat.id} value={cat.id}>{cat.title}</option>
+    <div>
+      {/* Render UI for adding notes and categories */}
+      {categories.map(category => (
+        <div key={category.id}>
+          <h2>{category.title}</h2>
+          <div>
+            {category.notes.map(note => (
+              <div key={note.id}>{note.text}</div>
             ))}
-          </select>
-          <button onClick={handleAddNote}>Add Note</button>
-        </NoteInput>
-
-        {categories.map(category => (
-          <CategoryContainer key={category.id}>
-            <CategoryTitle>{category.title}</CategoryTitle>
-            <NoteList ref={drop}>
-              {category.notes.map(note => (
-                <NoteCard key={note.id} ref={drag}>
-                  {note.text}
-                </NoteCard>
-              ))}
-            </NoteList>
-          </CategoryContainer>
-        ))}
-      </Wrapper>
-    </DndProvider>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 };
 
-const Wrapper = styled.div`
-  display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
-`;
-
-const NoteInput = styled.div`
-  margin-bottom: 20px;
-
-  input, select {
-    margin-right: 10px;
-    padding: 5px;
-  }
-
-  button {
-    padding: 5px 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-  }
-`;
-
-const CategoryContainer = styled.div`
-  border: 1px solid #ccc;
-  padding: 8px;
-  margin-bottom: 16px;
-`;
-
-const CategoryTitle = styled.h2`
-  margin-bottom: 8px;
-`;
-
-const NoteList = styled.div`
-  min-height: 50px;
-  background-color: #f0f0f0;
-`;
-
-const NoteCard = styled.div`
-  padding: 8px;
-  border: 1px solid #ccc;
-  margin-bottom: 4px;
-`;
 
 export default NoteMaker;
